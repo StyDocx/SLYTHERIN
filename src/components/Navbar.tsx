@@ -1,141 +1,278 @@
-import React, { useState } from 'react';
-import { Menu, X, Shield, Sparkles, KeyRound } from 'lucide-react';
-import { sound } from '../audio/soundEngine';
+import React, { useState, useEffect } from 'react';
+import { CompassSparkleIcon } from './IconSet';
+import { ChamferButton } from './ChamferButton';
 
-interface NavbarProps {
-  activeSection: string;
-  onNavigate: (sectionId: string) => void;
-  onOpenAdmin: () => void;
+export interface NavItem {
+  id: string;
+  label: string;
+  href: string;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate, onOpenAdmin }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+interface NavBarProps {
+  activeId: string;
+  onSelectNav: (id: string) => void;
+  onRegisterClick: () => void;
+}
 
-  const navItems = [
-    { id: 'hero', label: 'Castle Keep' },
-    { id: 'greathall', label: 'The Great Hall' },
-    { id: 'events', label: 'Magical Events' },
-    { id: 'map', label: "Marauder's Map" },
-    { id: 'commonroom', label: 'Slytherin House' },
-    { id: 'schedule', label: 'Schedule' },
-    { id: 'spellbook', label: 'The Spellbook' },
-    { id: 'wizards', label: 'Our Wizards' },
-    { id: 'register', label: 'Acceptance Letter' }
-  ];
+const LEFT_LINKS: NavItem[] = [
+  { id: 'home', label: 'Home', href: '#home' },
+  { id: 'about', label: 'About', href: '#about' },
+  { id: 'events', label: 'Events', href: '#events' },
+];
 
-  const handleNavClick = (id: string) => {
-    sound.playGoldClick();
-    onNavigate(id);
-    setMobileMenuOpen(false);
+const RIGHT_LINKS: NavItem[] = [
+  { id: 'teams', label: 'Teams', href: '#teams' },
+  { id: 'leaderboard', label: 'Leaderboard', href: '#leaderboard' },
+  { id: 'contact', label: 'Contact', href: '#contact' },
+];
+
+export const NavBar: React.FC<NavBarProps> = ({
+  activeId,
+  onSelectNav,
+  onRegisterClick,
+}) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [condensed, setCondensed] = useState(false);
+
+  useEffect(() => {
+    let lastY = window.scrollY;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && drawerOpen) {
+        setDrawerOpen(false);
+      }
+    };
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 16);
+      if (y > lastY && y > 28) {
+        setCondensed(true);
+      } else if (y < lastY || y <= 16) {
+        setCondensed(false);
+      }
+      lastY = y;
+    };
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY > 20) {
+        setCondensed(true);
+      } else if (e.deltaY < -10) {
+        setCondensed(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('wheel', handleWheel);
+    };
+  }, [drawerOpen]);
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    onSelectNav(id);
+    setDrawerOpen(false);
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-40 bg-[#00140F]/90 backdrop-blur-md border-b border-[#C9A44C]/30 transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          
-          {/* Logo & Crest */}
-          <div
-            onClick={() => handleNavClick('hero')}
-            className="flex items-center space-x-3 cursor-pointer group"
-          >
-            <div className="relative w-11 h-11 flex items-center justify-center rounded-full border border-[#C9A44C] bg-[#001C16] shadow-emerald-glow group-hover:border-[#E6C66F] group-hover:scale-105 transition-all">
-              <Shield className="w-6 h-6 text-[#E6C66F] group-hover:text-[#F9DF88] transition-colors" />
-              <div className="absolute inset-0 rounded-full bg-[#08734B]/20 animate-pulse pointer-events-none" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-cinzel text-xs tracking-[0.25em] text-[#C6C9C8] group-hover:text-[#E6C66F] transition-colors">
-                HOGWARTS 2026
-              </span>
-              <span className="font-cinzel-dec text-base font-bold tracking-widest text-gold-gradient">
-                SLYTHERIN OLYMPIA
-              </span>
-            </div>
-          </div>
-
-          {/* Desktop Navigation Links */}
-          <div className="hidden xl:flex items-center space-x-1 lg:space-x-2">
-            {navItems.map(item => {
-              const isActive = activeSection === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handleNavClick(item.id)}
-                  onMouseEnter={() => sound.playWandSparkle()}
-                  className={`relative px-3 py-2 font-cinzel text-xs tracking-wider transition-all duration-200 group ${
-                    isActive
-                      ? 'text-[#F9DF88] font-bold text-shadow-gold'
-                      : 'text-[#D9C99F]/80 hover:text-[#E6C66F]'
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  {/* Ornate Golden Underline Hover Effect */}
-                  <span
-                    className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-gradient-to-r from-transparent via-[#E6C66F] to-transparent transition-all duration-300 ${
-                      isActive ? 'w-full' : 'w-0 group-hover:w-full'
-                    }`}
-                  />
-                </button>
-              );
-            })}
-
-            {/* Admin Key Icon */}
-            <button
-              onClick={() => {
-                sound.playGoldClick();
-                onOpenAdmin();
-              }}
-              title="Admin Chamber Portal"
-              className="ml-3 p-2 rounded border border-[#C9A44C]/40 hover:border-[#E6C66F] text-[#C9A44C] hover:text-[#F9DF88] hover:bg-[#08734B]/20 transition-all"
-            >
-              <KeyRound className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex xl:hidden items-center space-x-3">
-            <button
-              onClick={() => {
-                sound.playGoldClick();
-                onOpenAdmin();
-              }}
-              className="p-2 text-[#C9A44C] border border-[#C9A44C]/40 rounded hover:border-[#E6C66F]"
-              title="Admin Portal"
-            >
-              <KeyRound className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => {
-                sound.playGoldClick();
-                setMobileMenuOpen(!mobileMenuOpen);
-              }}
-              className="p-2 rounded text-[#E6C66F] hover:text-[#F9DF88] border border-[#C9A44C]/30 focus:outline-none"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-
-        </div>
+    <header
+      className={`site-header page-fade-item ${scrolled ? 'is-scrolled' : ''} ${
+        condensed ? 'is-condensed' : ''
+      }`}
+    >
+      {/* Top Hairline Gold Border with Corner Diamond Accents */}
+      <div className="nav-hairline nav-hairline--top" aria-hidden="true">
+        <span className="nav-hairline__diamond nav-hairline__diamond--left" />
+        <span className="nav-hairline__segment nav-hairline__segment--left" />
+        <span className="nav-hairline__gap" />
+        <span className="nav-hairline__segment nav-hairline__segment--right" />
+        <span className="nav-hairline__diamond nav-hairline__diamond--right" />
       </div>
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="xl:hidden bg-[#001C16]/98 border-b-2 border-[#C9A44C] px-5 pt-3 pb-6 space-y-2 backdrop-blur-xl animate-fadeIn">
-          {navItems.map(item => (
-            <button
-              key={item.id}
-              onClick={() => handleNavClick(item.id)}
-              className={`block w-full text-left py-2.5 px-3 rounded font-cinzel text-sm tracking-widest border transition-all ${
-                activeSection === item.id
-                  ? 'border-[#C9A44C] bg-[#08734B]/30 text-[#F9DF88] font-bold'
-                  : 'border-transparent text-[#D9C99F] hover:border-[#C9A44C]/40 hover:bg-[#003B2D]/40'
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
+      <nav className="site-nav" aria-label="Primary navigation">
+        {/* Left Brand: Slytherin Serpent Shield Asset + Two-Line Text */}
+        <a
+          href="#home"
+          onClick={(e) => handleLinkClick(e, 'home')}
+          className="nav-brand"
+        >
+          <picture className="nav-brand-crest-wrap">
+            <source srcSet="/assets/nav-left-crest.webp" type="image/webp" />
+            <img
+              src="/assets/nav-left-crest.png"
+              alt="Slytherin House Serpent Shield Emblem"
+              width={42}
+              height={48}
+              className="nav-brand-crest-img"
+              decoding="async"
+            />
+          </picture>
+          <span className="nav-brand__text">
+            <span className="nav-brand__line">Zenforianz</span>
+            <span className="nav-brand__line">Presents</span>
+          </span>
+        </a>
+
+        {/* Left Links: Home | About | Events */}
+        <ul className="nav-links nav-links--left">
+          {LEFT_LINKS.map((item) => {
+            const isActive = activeId === item.id;
+            return (
+              <li key={item.id} className="nav-links__item">
+                <a
+                  href={item.href}
+                  onClick={(e) => handleLinkClick(e, item.id)}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`nav-links__anchor ${isActive ? 'is-active' : ''}`}
+                >
+                  {item.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Center Slytherin Serpent Crest Asset + Filigree Wings */}
+        <a
+          href="#home"
+          onClick={(e) => handleLinkClick(e, 'home')}
+          className="nav-center-ornament"
+          aria-label="Slytherin House Sanctum Home"
+        >
+          <svg
+            className="nav-center-wings"
+            viewBox="0 0 220 76"
+            fill="none"
+            aria-hidden="true"
+          >
+            {/* Left Acanthus Filigree Wing */}
+            <path
+              d="M8 62 H56 C65 62 72 56 76 49 C70 50 64 56 54 56 H28"
+              stroke="var(--antique-gold)"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+            />
+            <path
+              d="M42 62 C47 50 56 44 67 47 C61 40 52 42 46 50"
+              stroke="var(--champagne-gold)"
+              strokeWidth="1.15"
+              strokeLinecap="round"
+            />
+            <polygon points="18,62 21,59.5 24,62 21,64.5" fill="var(--champagne-gold)" />
+
+            {/* Right Acanthus Filigree Wing */}
+            <path
+              d="M212 62 H164 C155 62 148 56 144 49 C150 50 156 56 166 56 H192"
+              stroke="var(--antique-gold)"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+            />
+            <path
+              d="M178 62 C173 50 164 44 153 47 C159 40 168 42 174 50"
+              stroke="var(--champagne-gold)"
+              strokeWidth="1.15"
+              strokeLinecap="round"
+            />
+            <polygon points="202,62 199,59.5 196,62 199,64.5" fill="var(--champagne-gold)" />
+          </svg>
+          <picture className="nav-center-crest-wrap">
+            <source srcSet="/assets/nav-center-crest.webp" type="image/webp" />
+            <img
+              src="/assets/nav-center-crest.png"
+              alt="Central Slytherin Serpent Crest"
+              width={96}
+              height={86}
+              className="nav-center-crest-img"
+              fetchPriority="high"
+              decoding="async"
+            />
+          </picture>
+        </a>
+
+        {/* Right Links: Teams | Leaderboard | Contact */}
+        <ul className="nav-links nav-links--right">
+          {RIGHT_LINKS.map((item) => {
+            const isActive = activeId === item.id;
+            return (
+              <li key={item.id} className="nav-links__item">
+                <a
+                  href={item.href}
+                  onClick={(e) => handleLinkClick(e, item.id)}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`nav-links__anchor ${isActive ? 'is-active' : ''}`}
+                >
+                  {item.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Right CTA: Chamfered "Register Now" with Compass Sparkle Icon */}
+        <div className="nav-cta">
+          <ChamferButton variant="nav" onClick={onRegisterClick}>
+            <CompassSparkleIcon />
+            <span>Register Now</span>
+          </ChamferButton>
         </div>
-      )}
-    </nav>
+
+        {/* Mobile Hamburger Button */}
+        <button
+          type="button"
+          className={`nav-hamburger ${drawerOpen ? 'is-open' : ''}`}
+          aria-label={drawerOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={drawerOpen}
+          aria-controls="mobile-nav-drawer"
+          onClick={() => setDrawerOpen((prev) => !prev)}
+        >
+          <span className="nav-hamburger__bar" />
+          <span className="nav-hamburger__bar" />
+          <span className="nav-hamburger__bar" />
+        </button>
+      </nav>
+
+      {/* Bottom Hairline Gold Border (split around center crest) */}
+      <div className="nav-hairline nav-hairline--bottom" aria-hidden="true">
+        <span className="nav-hairline__diamond nav-hairline__diamond--left" />
+        <span className="nav-hairline__segment nav-hairline__segment--left" />
+        <span className="nav-hairline__gap" />
+        <span className="nav-hairline__segment nav-hairline__segment--right" />
+        <span className="nav-hairline__diamond nav-hairline__diamond--right" />
+      </div>
+
+      {/* Accessible Mobile Navigation Drawer */}
+      <div
+        id="mobile-nav-drawer"
+        className={`mobile-drawer ${drawerOpen ? 'is-open' : ''}`}
+        aria-hidden={!drawerOpen}
+      >
+        <ul className="mobile-drawer__list">
+          {[...LEFT_LINKS, ...RIGHT_LINKS].map((item) => (
+            <li key={item.id} className="mobile-drawer__item">
+              <a
+                href={item.href}
+                onClick={(e) => handleLinkClick(e, item.id)}
+                className={`mobile-drawer__link ${activeId === item.id ? 'is-active' : ''}`}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div className="mobile-drawer__cta">
+          <ChamferButton
+            variant="primary"
+            onClick={() => {
+              setDrawerOpen(false);
+              onRegisterClick();
+            }}
+          >
+            <CompassSparkleIcon />
+            <span>Register Now</span>
+          </ChamferButton>
+        </div>
+      </div>
+    </header>
   );
 };

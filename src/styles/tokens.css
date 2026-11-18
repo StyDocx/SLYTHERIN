@@ -1,0 +1,86 @@
+:root {
+  /* Reference Canvas Base Proportions */
+  --ref-w: 1672;
+  --ref-h: 941;
+
+  /* Exact Luxury Gothic Color Palette (Golden Ivory x Emerald Green) */
+  --deep-emerald: #003B2E;
+  --dark-forest: #05271F;
+  --midnight-black: #07110D;
+  --antique-gold: #C6A15B;
+  --champagne-gold: #E5CC91;
+  --warm-ivory: #F5EBD5;
+  --muted-gold: #A98745;
+  --translucent-emerald: rgba(0, 59, 46, 0.78);
+
+  /* Semantic Aliases for Components */
+  --bg-abyss: #07110D;
+  --bg-deep: #05271F;
+  --bg-emerald: #003B2E;
+  --bg-panel: rgba(4, 39, 30, 0.80);
+  --bg-panel-dense: rgba(5, 22, 17, 0.92);
+
+  /* Button Backgrounds */
+  --bg-cta-primary: linear-gradient(
+    180deg,
+    rgba(6, 59, 45, 0.95) 0%,
+    rgba(4, 36, 27, 0.97) 55%,
+    rgba(3, 20, 15, 0.99) 100%
+  );
+  --bg-cta-ivory: linear-gradient(
+    180deg,
+    #FBF5E6 0%,
+    #F5EBD5 38%,
+    #E5CC91 78%,
+    #CFAF6B 100%
+  );
+
+  /* Gold & Ivory Hierarchy */
+  --gold: #C6A15B;
+  --gold-bright: #E5CC91;
+  --gold-dim: #8C6D32;
+  --gold-line: rgba(198, 161, 91, 0.52);
+  --gold-soft: rgba(229, 204, 145, 0.28);
+  --gold-faint: rgba(198, 161, 91, 0.14);
+
+  /* Text Tokens */
+  --cream: #F5EBD5;
+  --cream-muted: #E5CC91;
+  --text-dark: #071A14;
+
+  /* Metallic Champagne-Gold & Warm Ivory Title Gradient */
+  --title-gradient: linear-gradient(
+    180deg,
+    #FFFDF7 0%,
+    #F5EBD5 24%,
+    #E5CC91 52%,
+    #C6A15B 76%,
+    #9A7635 90%,
+    #E5CC91 100%
+  );
+
+  /* Typography Families */
+  --font-display: 'Cinzel', Georgia, serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+
+  /* Spacing Scale (4 / 8 / 12 / 16 / 24 / 32 / 48) */
+  --space-4: 0.25rem;
+  --space-8: 0.5rem;
+  --space-12: 0.75rem;
+  --space-16: 1rem;
+  --space-24: 1.5rem;
+  --space-32: 2rem;
+  --space-48: 3rem;
+
+  /* Radii (2 max — design is primarily chamfered) */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+
+  /* Single Shadow System */
+  --shadow-panel: 0 12px 32px rgba(0, 0, 0, 0.82), inset 0 1px 0 rgba(229, 204, 145, 0.22);
+  --shadow-elevated: 0 16px 40px rgba(0, 0, 0, 0.90), inset 0 1px 0 rgba(229, 204, 145, 0.36);
+
+  /* Restrained Luxury Gold Illumination System (No Neon Green) */
+  --glow-gold-sm: 0 0 12px rgba(229, 204, 145, 0.32);
+  --glow-gold-md: 0 0 20px rgba(198, 161, 91, 0.38), 0 0 38px rgba(0, 59, 46, 0.45);
+}
