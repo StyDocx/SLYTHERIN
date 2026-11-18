@@ -1,108 +1,131 @@
-# SLYTHERIN OLYMPIA 2026 — Inter-College Grand Wizarding Symposium
+# SLYTHERIN — The House Event & College Fest Platform
 
-> *"AMBITION HAS NO LIMITS."*  
-> *"WHERE AMBITION MEETS MAGIC."*
-
-An extraordinary, cinematic, and fully interactive inter-college wizarding event website crafted as a living extension of the **Slytherin Olympia 2026** poster.
+Production-ready interactive web application for the College Cultural & Sports Fest (Slytherin House Event). Built with **Vite + React + TypeScript**, **Express + Supabase (Postgres & Auth)**, and configured for zero-config global deployment on **Vercel**.
 
 ---
 
-## 🏰 Visual Identity & Palette
+## ⚡ Quick Start for Production
 
-- **Deep Emerald Green:** `#003B2D`
-- **Dark Forest Green:** `#001C16`
-- **Enchanted Green:** `#08734B`
-- **Antique Gold:** `#C9A44C`
-- **Metallic Gold:** `#E6C66F`
-- **Silver:** `#C6C9C8`
-- **Parchment:** `#D9C99F`
-- **Charcoal Black:** `#090D0B`
+### Architecture Overview
+- **Frontend:** Vite SPA with GSAP motion, luxury gold-and-emerald aesthetic, QR pass generation, dual-track registration (44 Cultural Events, 26 Olympia Sports, Veg/Non-Veg meal option).
+- **Backend / API:** Serverless Express application running on Vercel Node runtime via `api/index.js` (or standalone Node via `server.js`).
+- **Database:** Supabase PostgreSQL with atomic pass counter, single-scan verification triggers, JSONB event storage, and Row Level Security (RLS).
+- **Authentication:** Supabase Auth + HttpOnly `__Host-` Strict cookies for `/admin/login`, with Super Admin privilege delegation and immutable audit logging.
 
 ---
 
-## ⚡ Tech Stack & Architecture
+## 🛠️ Step 1: Supabase Setup (Database & Auth)
 
-- **Frontend:** React 18, TypeScript, Vite 6, Tailwind CSS, Lucide Icons, Canvas Confetti.
-- **Visuals & 3D:** HTML5 2D/3D Canvas volumetric mist & embers simulation, CSS 3D perspective transforms with real-time cursor tilt physics, floating animated candles, and procedural parchment effects.
-- **Sound System:** Pure procedural **Web Audio API** engine. Synthesizes ambient castle cathedral drones, wind pink-noise, distant thunder rumbles, ascending crystalline wand sparkles, heavy door rumbles, parchment page turns, and wax seal thumps without external network dependencies or copyright issues.
-- **Backend & Database:** Node.js, Express, REST APIs (`/api/events`, `/api/registrations`, `/api/stats`, `/api/export-csv`), persistent JSON database with automatic seeding.
+### 1.1 Create a Supabase Project
+1. Go to [supabase.com](https://supabase.com) and sign in or create an account.
+2. Click **"New Project"**.
+3. Choose a name (e.g. `slytherin-fest`), select a strong database password, and pick a region close to your users (e.g. `Mumbai (ap-south-1)` or `Singapore`).
+4. Wait ~2 minutes for the database to provision.
 
----
+### 1.2 Run Database Schema & Security Policies
+1. In your Supabase project dashboard, click **"SQL Editor"** on the left menu.
+2. Click **"New query"**.
+3. Copy the entire contents of [`supabase/schema.sql`](supabase/schema.sql) and paste it into the editor.
+4. Click **"Run"** (or press `Ctrl+Enter` / `Cmd+Enter`).
+5. You will see `Success. No rows returned`. All tables (`admins`, `admin_audit_log`, `registrations`, `app_settings`), sequences, and RLS policies are now active.
 
-## 🌟 Interactive Experiences
+### 1.3 Create the First Super Admin
+You have two easy options to create your first super admin:
 
-1. **Cinematic Opening (The Arrival at Hogwarts):**
-   - **Scene 1:** Darkness, distant wind, green fog awakening.
-   - **Scene 2:** Spired Hogwarts castle awakening with illuminated gothic windows, lightning, and flying owl silhouettes.
-   - **Scene 3:** 3D rotating metallic serpent emblem reflecting emerald light, displaying *"AMBITION HAS NO LIMITS"*.
-   - **Scene 4:** Antique-gold *"ENTER THE CASTLE"* button with spell burst and door transition, plus a cinematic skip option.
+#### Option A: Directly in Supabase Dashboard (Recommended - No Terminal Required)
+1. Go to **Authentication** &rarr; **Users** &rarr; click **"Add user"** &rarr; **"Create user"**.
+2. Enter your email (e.g. `admin@college.edu`) and a strong password (12+ characters).
+3. Ensure **"Auto Confirm User"** is checked, then click **"Create user"**.
+4. Now go to **SQL Editor** &rarr; **New query**, paste this and click **Run**:
+   ```sql
+   insert into public.admins (user_id, email, role, active)
+   select id, email, 'super_admin', true
+   from auth.users
+   where email = 'admin@college.edu'
+   on conflict (user_id) do update set role = 'super_admin', active = true;
+   ```
+5. Your account is now a verified `super_admin`!
 
-2. **Living Poster Hero Section:**
-   - 3D parallax silhouette castle with glowing windows and floating lanterns.
-   - Specular metallic Slytherin serpent crest responding dynamically to cursor position.
-   - Institutional insignias (Hogwarts Academy, Salazar Research Foundation).
-   - Real-time tournament countdown timer to 14 March 2026.
-
-3. **The Great Hall (Event Discovery):**
-   - Floating enchanted candles with flickering physics.
-   - 5 magical division gateways: **Technical**, **Non-Technical**, **Cultural**, **Gaming**, and **Special**.
-
-4. **The 10 Event Chambers:**
-   - Unfolds as an ancient leather-bound grimoire.
-   - Filter by category and search by spell/chamber keyword.
-   - Complete with dates, times, venues, bounties (Galleons), team/solo requirements, regulations, and coordinator owl post contacts.
-
-5. **The Marauder's Map:**
-   - Activates with *"I solemnly swear that I am up to no good"* and conceals with *"Mischief Managed"*.
-   - Animated wandering footsteps (*Draco Malfoy*, *Severus Vance*, *Head Prefect*).
-   - Clickable interactive chambers showing live trials and presiding wizards with teleportation jump.
-
-6. **The Slytherin Common Room:**
-   - Subterranean lake dungeon with caustic reflections and shadows outside underwater gothic windows.
-   - 3D cursor-tracking silver-gold reliquary.
-   - Roaring emerald hearth and interactive Ambition Oracle.
-
-7. **Tournament Schedule:**
-   - Day 1 (14 March 2026) and Day 2 (15 March 2026) timeline with status badges (*Live Now*, *Upcoming*).
-
-8. **The Spellbook of Rules:**
-   - 5 interactive parchment chapters: Code of Assembly, Wand & Hardware Protocol, Delegation Eligibility, Galleon Exchange, and FAQ.
-
-9. **Acceptance Letter Registration:**
-   - Official invitation format on textured aged parchment.
-   - Live client/server validation and unique Reference ID generation (`SLY-2026-XXXX`).
-   - Sealed with an official red wax insignia, celebratory golden confetti, and instant printing/download capability.
-
-10. **The Gallery of Wizards:**
-    - Moving portraits with subtle levitation and living frames for faculty and student conveners.
-
-11. **Admin Chamber Portal:**
-    - Secured by passcode: `slytherin2026`.
-    - Event CRUD (add/edit/delete chambers).
-    - Participant list management with status toggle (*Confirmed* vs *Pending*).
-    - 1-click **Export to CSV** for participant rolls.
-    - Real-time treasury & registration analytics.
-
-12. **Magical Audio Sanctuary:**
-    - Floating crystal orb controller with volume slider, mute toggle, ambience toggle, SFX toggle, and castle resonance switcher (*Towers*, *Dungeons*, *Great Hall*).
-
----
-
-## 🚀 Running the Application
-
-### Development Mode (Vite Hot-Reload):
+#### Option B: Via Terminal CLI Script
+From your local workspace, run:
 ```bash
-npm run dev
+npm run create-super-admin -- admin@college.edu 'YourStrongPassword123!'
 ```
-Runs at `http://localhost:5173`.
 
-### Full-Stack Production Mode:
+### 1.4 Retrieve API Credentials
+1. In Supabase, go to **Project Settings** (gear icon) &rarr; **API**.
+2. Copy these 3 values:
+   - **Project URL** (e.g. `https://xxxxxxxx.supabase.co`)
+   - **Project API Keys &rarr; `anon` `public`** (starts with `ey...`)
+   - **Project API Keys &rarr; `service_role` `secret`** (starts with `ey...`)
+
+---
+
+## 🚀 Step 2: Vercel Deployment Setup
+
+The repository is pre-configured with [`vercel.json`](vercel.json) and [`api/index.js`](api/index.js) so Vercel builds the React frontend and deploys the Express backend as serverless functions automatically.
+
+### 2.1 Push to GitHub / Git Provider
 ```bash
+git add .
+git commit -m "Production release for Vercel & Supabase"
+git push origin main
+```
+
+### 2.2 Import Project in Vercel
+1. Log in to [vercel.com](https://vercel.com).
+2. Click **"Add New..."** &rarr; **"Project"**.
+3. Select your Git repository and click **"Import"**.
+4. In the Project Configuration screen:
+   - **Framework Preset:** `Vite` (automatically detected)
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+   - **Install Command:** `npm install`
+
+### 2.3 Add Environment Variables in Vercel
+Expand **"Environment Variables"** in the Vercel project configuration and add the following:
+
+| Key | Value | Description |
+| :--- | :--- | :--- |
+| `NODE_ENV` | `production` | Enables production security & `__Host-` cookies |
+| `SUPABASE_URL` | `https://YOUR_ID.supabase.co` | Your Supabase Project URL |
+| `SUPABASE_ANON_KEY` | `eyJhbGciOi...` | Supabase Anon Public Key |
+| `SUPABASE_SERVICE_ROLE_KEY` | `eyJhbGciOi...` | Supabase Service Role Secret Key |
+| `TRUST_PROXY` | `1` | Enables accurate IP rate-limiting behind Vercel |
+
+*(Optional variables: `ALLOWED_ORIGINS` for custom domain CORS, `GOOGLE_SHEET_WEBHOOK_URL` for Google Sheets sync).*
+
+### 2.4 Deploy!
+Click **"Deploy"**. Vercel will build the frontend into `dist/` and configure the Serverless API in ~45 seconds. You will be given a live production domain (e.g. `https://slytherin-house-event.vercel.app`).
+
+---
+
+## 🔐 Step 3: Accessing Admin in Production
+
+1. Visit: `https://your-domain.vercel.app/admin/login`
+2. Sign in with the super admin credentials created in Step 1.3.
+3. Once logged in:
+   - **Admin Management:** As a `super_admin`, you can add secondary staff/volunteer accounts directly in the admin portal (they can be assigned `admin` for scanner operators or `super_admin`).
+   - **Scanner 1 (Attendance Gate):** Enforces single-scan entry; prevents duplicate admissions.
+   - **Scanner 2 (Food Counter):** Surfaces meal preference (`🍗 NON-VEG` or `🥬 PURE VEG`) and enforces single-pass food distribution.
+   - **Attendee Registry:** Search, filter, and export live data to Google Sheets-compatible CSV.
+
+---
+
+## 🧪 Local Development
+
+To run locally before deploying:
+```bash
+# Copy environment file
+cp .env.example .env
+# Fill in your Supabase credentials in .env
+
+# Run development server
+npm run dev
+
+# Or test full production build locally
 npm run build
 npm start
 ```
-Runs both the REST API backend and the built frontend at `http://localhost:3000`.
-
-### Admin Access:
-- Click the key icon in the navigation bar.
-- Passcode: `slytherin2026`
+*Note: If Supabase keys are not set locally, the server operates in safe offline demo mode with mock auth (`admin@example.com` / `Slytherin@Demo2026`) and local JSON persistence.*
+# SLYTHERIN
