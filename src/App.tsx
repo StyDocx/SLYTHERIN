@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { NavBar } from './components/NavBar';
+import { NavBar } from './components/Navbar';
 import { OrnateFrame } from './components/OrnateFrame';
 import { ChamferButton } from './components/ChamferButton';
 import { FeatureCard } from './components/FeatureCard';
