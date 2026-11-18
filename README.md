@@ -129,3 +129,4 @@ npm start
 ```
 *Note: If Supabase keys are not set locally, the server operates in safe offline demo mode with mock auth (`admin@example.com` / `Slytherin@Demo2026`) and local JSON persistence.*
 # SLYTHERIN
+# SLYTHERIN
