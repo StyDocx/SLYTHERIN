@@ -688,12 +688,9 @@ export function App() {
             <FooterSerpentEmblem />
           </div>
 
-          {/* Bottom Right Quote, Sound Toggle & Admin Scanner Portal Button */}
+          {/* Bottom Right Quote & Sound Toggle */}
           <div className="hero-footer__right-group">
             <AmbientSoundToggle />
-            <a href="/admin" className="hero-footer__admin-btn" title="Staff & Admin Portal">
-              Admin Portal
-            </a>
             <p className="hero-footer__quote">
               — &ldquo;Ambition drives us forward.&rdquo; —
             </p>
