@@ -5,6 +5,9 @@ interface ChamferButtonProps {
   type?: 'button' | 'submit' | 'reset';
   onClick?: () => void;
   href?: string;
+  target?: string;
+  rel?: string;
+  download?: string | boolean;
   ariaLabel?: string;
   className?: string;
   children: React.ReactNode;
@@ -15,6 +18,9 @@ export const ChamferButton: React.FC<ChamferButtonProps> = ({
   type = 'button',
   onClick,
   href,
+  target,
+  rel,
+  download,
   ariaLabel,
   className = '',
   children,
@@ -107,7 +113,15 @@ export const ChamferButton: React.FC<ChamferButtonProps> = ({
 
   if (href) {
     return (
-      <a href={href} onClick={onClick} aria-label={ariaLabel} className={classes}>
+      <a
+        href={href}
+        target={target}
+        rel={target === '_blank' ? rel || 'noopener noreferrer' : rel}
+        download={download}
+        onClick={onClick}
+        aria-label={ariaLabel}
+        className={classes}
+      >
         {frameSvg()}
         <span className="chamfer-btn__inner">{children}</span>
       </a>

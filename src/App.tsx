@@ -491,7 +491,9 @@ export function App() {
 
             <ChamferButton
               variant="secondary"
-              onClick={() => setActiveModal('brochure')}
+              href="/slytherin-brochure.pdf"
+              target="_blank"
+              download="Slytherin'26 Brochure.pdf"
             >
               <DocumentBrochureIcon />
               <span>Event Brochure</span>
@@ -1299,9 +1301,14 @@ export function App() {
                       </div>
                     </div>
                     <div className="modal-form__actions modal-form__actions--split">
-                      <ChamferButton variant="secondary" onClick={() => window.print()}>
+                      <ChamferButton
+                        variant="secondary"
+                        href="/slytherin-brochure.pdf"
+                        target="_blank"
+                        download="Slytherin'26 Brochure.pdf"
+                      >
                         <DocumentBrochureIcon />
-                        <span>Print / Save Brochure</span>
+                        <span>Download Brochure (PDF)</span>
                       </ChamferButton>
                       <ChamferButton variant="primary" onClick={openRegistrationPicker}>
                         <span>Register Now</span>
