@@ -63,6 +63,10 @@ function cookieStr(name, value, maxAge) {
 function setSessionCookies(res, session) {
   res.append('Set-Cookie', cookieStr(COOKIE_AT, session.access_token, Math.max(60, session.expires_in || 3600)));
   res.append('Set-Cookie', cookieStr(COOKIE_RT, session.refresh_token, RT_MAX_AGE));
+  if (IS_PROD) {
+    res.append('Set-Cookie', cookieStr('sly_at', session.access_token, Math.max(60, session.expires_in || 3600)));
+    res.append('Set-Cookie', cookieStr('sly_rt', session.refresh_token, RT_MAX_AGE));
+  }
 }
 
 function clearSessionCookies(res) {
@@ -219,7 +223,8 @@ export function csrfGuard(req, res, next) {
   if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS') return next();
   const origin = req.headers.origin;
   if (origin) {
-    const defaultAllowed = 'http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000';
+    const defaultAllowed =
+      'http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000,https://slytherin-eight.vercel.app';
     const allowed = new Set(
       `${defaultAllowed},${process.env.ALLOWED_ORIGINS || ''}`
         .split(',')
@@ -232,7 +237,9 @@ export function csrfGuard(req, res, next) {
     } catch {
       return res.status(403).json({ error: 'Bad origin.' });
     }
-    if (host !== req.headers.host && !allowed.has(origin)) {
+    const isVercel = host.endsWith('.vercel.app');
+    const reqHost = req.headers['x-forwarded-host'] || req.headers.host;
+    if (host !== req.headers.host && host !== reqHost && !allowed.has(origin) && !isVercel) {
       return res.status(403).json({ error: 'Cross-origin request blocked.' });
     }
   }

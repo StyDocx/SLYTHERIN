@@ -21,10 +21,15 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 app.disable('x-powered-by');
 if (process.env.TRUST_PROXY) app.set('trust proxy', Number(process.env.TRUST_PROXY) || 1);
 
-// Enable CORS for local Vite dev server (port 5173) and localhost
+// Enable CORS for local Vite dev server, localhost, and Vercel domains
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (origin && /^https?:\/\/(localhost|127\.0\.0\.1):(5173|3000)$/.test(origin)) {
+  if (
+    origin &&
+    (/^https?:\/\/(localhost|127\.0\.0\.1):(5173|3000)$/.test(origin) ||
+      /^https:\/\/([a-z0-9-]+)\.vercel\.app$/.test(origin) ||
+      origin === 'https://slytherin-eight.vercel.app')
+  ) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -45,9 +50,9 @@ app.use((req, res, next) => {
       "script-src 'self'",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob:",
-      "media-src 'self' blob:",
-      "connect-src 'self'",
+      "img-src 'self' data: blob: https:",
+      "media-src 'self' blob: https:",
+      "connect-src 'self' https://flqqzwybapmhihaqplfk.supabase.co https://*.supabase.co https://*.vercel.app",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",

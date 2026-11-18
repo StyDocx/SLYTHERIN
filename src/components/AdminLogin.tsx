@@ -16,7 +16,7 @@ export const AdminLogin: React.FC = () => {
     meta.content = 'noindex,nofollow';
     document.head.appendChild(meta);
     // Already signed in? Go straight to the dashboard.
-    fetch('/api/admin/me', { credentials: 'same-origin' })
+    fetch('/api/admin/me', { credentials: 'include' })
       .then((r) => {
         if (r.ok) window.location.replace('/admin');
       })
@@ -34,7 +34,7 @@ export const AdminLogin: React.FC = () => {
     try {
       const res = await fetch('/api/admin/login', {
         method: 'POST',
-        credentials: 'same-origin',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });

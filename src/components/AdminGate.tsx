@@ -20,7 +20,7 @@ export const AdminGate: React.FC<Props> = ({ localRegistrations, onUpdateLocalRe
 
   useEffect(() => {
     document.title = 'Admin';
-    fetch('/api/admin/me', { credentials: 'same-origin' })
+    fetch('/api/admin/me', { credentials: 'include' })
       .then(async (r) => {
         if (r.ok) {
           setMe(await r.json());
@@ -35,7 +35,7 @@ export const AdminGate: React.FC<Props> = ({ localRegistrations, onUpdateLocalRe
   }, []);
 
   const logout = async () => {
-    await fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => undefined);
+    await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' }).catch(() => undefined);
     // Wipe cached PII from this browser
     try {
       localStorage.removeItem('slytherin_registrations');
